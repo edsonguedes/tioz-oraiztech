@@ -159,3 +159,90 @@ div[style*="Edit with Lovable"],
   z-index: -9999 !important;
 }
 
+
+/* ===== Tiozão RaizTech Landing ===== */
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(245,158,11,.3), 0 8px 24px rgba(217,119,6,.35); }
+  50% { box-shadow: 0 0 52px rgba(245,158,11,.7), 0 12px 32px rgba(217,119,6,.55); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .55; transform: scale(1.25); }
+}
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.tz-shimmer {
+  background: linear-gradient(90deg, #FCD34D 0%, #F59E0B 25%, #FCD34D 50%, #F59E0B 75%, #FCD34D 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+.tz-btn-gold {
+  background: linear-gradient(135deg, #D97706 0%, #F59E0B 50%, #FCD34D 100%);
+  color: #111827;
+  font-weight: 800;
+  animation: pulse-glow 2.6s ease-in-out infinite;
+  transition: transform .2s ease;
+}
+.tz-btn-gold:hover { transform: translateY(-2px); }
+.tz-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.tz-card:hover {
+  transform: translateY(-7px);
+  border-color: rgba(245,158,11,0.35);
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,.6), 0 0 0 1px rgba(245,158,11,.15);
+}
+.tz-card-top {
+  position: relative;
+  overflow: hidden;
+}
+.tz-card-top::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, #1B4332, #F59E0B, transparent);
+}
+.tz-pain {
+  border-left: 3px solid #EF4444;
+  transition: transform .25s ease, background .25s ease;
+}
+.tz-pain:hover { transform: translateX(5px); background: rgba(239,68,68,.06); }
+.tz-reveal { opacity: 0; transform: translateY(36px); transition: opacity .8s ease, transform .8s ease; }
+.tz-reveal.tz-in { opacity: 1; transform: translateY(0); }
+.tz-pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
+.tz-float { animation: float-y 8s ease-in-out infinite; }
+.tz-ring-spin {
+  position: absolute; inset: -2px; border-radius: 26px; padding: 2px;
+  background: conic-gradient(from 0deg, #1B4332, #F59E0B, #FCD34D, #1B4332);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: spin-slow 12s linear infinite;
+}
+.tz-orb {
+  position: absolute; width: 320px; height: 320px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(64,145,108,.45) 0%, transparent 70%);
+  filter: blur(40px); z-index: 0;
+}
+.tz-chess {
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+details.tz-faq[open] summary .tz-faq-icon { transform: rotate(45deg); }
+.tz-faq-icon { transition: transform .25s ease; }
