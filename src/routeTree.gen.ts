@@ -13,6 +13,9 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminInboxRouteImport } from './routes/admin.inbox'
+import { Route as AdminCrmRouteImport } from './routes/admin.crm'
+import { Route as AdminInboxLeadIdRouteImport } from './routes/admin.inbox.$leadId'
 
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
@@ -34,31 +37,76 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminInboxRoute = AdminInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCrmRoute = AdminCrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInboxLeadIdRoute = AdminInboxLeadIdRouteImport.update({
+  id: '/$leadId',
+  path: '/$leadId',
+  getParentRoute: () => AdminInboxRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/admin/crm': typeof AdminCrmRoute
+  '/admin/inbox': typeof AdminInboxRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/inbox/$leadId': typeof AdminInboxLeadIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin/crm': typeof AdminCrmRoute
+  '/admin/inbox': typeof AdminInboxRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/inbox/$leadId': typeof AdminInboxLeadIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/admin/crm': typeof AdminCrmRoute
+  '/admin/inbox': typeof AdminInboxRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/inbox/$leadId': typeof AdminInboxLeadIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/admin/login' | '/admin/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/admin/crm'
+    | '/admin/inbox'
+    | '/admin/login'
+    | '/admin/'
+    | '/admin/inbox/$leadId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin/login' | '/admin'
-  id: '__root__' | '/' | '/admin' | '/admin/login' | '/admin/'
+  to:
+    | '/'
+    | '/admin/crm'
+    | '/admin/inbox'
+    | '/admin/login'
+    | '/admin'
+    | '/admin/inbox/$leadId'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/admin/crm'
+    | '/admin/inbox'
+    | '/admin/login'
+    | '/admin/'
+    | '/admin/inbox/$leadId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -96,15 +144,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/inbox': {
+      id: '/admin/inbox'
+      path: '/inbox'
+      fullPath: '/admin/inbox'
+      preLoaderRoute: typeof AdminInboxRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/crm': {
+      id: '/admin/crm'
+      path: '/crm'
+      fullPath: '/admin/crm'
+      preLoaderRoute: typeof AdminCrmRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/inbox/$leadId': {
+      id: '/admin/inbox/$leadId'
+      path: '/$leadId'
+      fullPath: '/admin/inbox/$leadId'
+      preLoaderRoute: typeof AdminInboxLeadIdRouteImport
+      parentRoute: typeof AdminInboxRoute
+    }
   }
 }
 
+interface AdminInboxRouteChildren {
+  AdminInboxLeadIdRoute: typeof AdminInboxLeadIdRoute
+}
+
+const AdminInboxRouteChildren: AdminInboxRouteChildren = {
+  AdminInboxLeadIdRoute: AdminInboxLeadIdRoute,
+}
+
+const AdminInboxRouteWithChildren = AdminInboxRoute._addFileChildren(
+  AdminInboxRouteChildren,
+)
+
 interface AdminRouteChildren {
+  AdminCrmRoute: typeof AdminCrmRoute
+  AdminInboxRoute: typeof AdminInboxRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCrmRoute: AdminCrmRoute,
+  AdminInboxRoute: AdminInboxRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
