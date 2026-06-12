@@ -202,6 +202,10 @@ function InboxPage() {
       canal === "whatsapp"
         ? active.lead.whatsapp
         : active.lead.instagram ?? active.lead.instagram_id;
+    if (!to) {
+      toast.error(`Lead sem ${canal} cadastrado.`);
+      return;
+    }
     const tempId = `temp-${Date.now()}`;
     const optimistic: Message = {
       id: tempId,
