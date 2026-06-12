@@ -182,10 +182,11 @@ export function LeadDrawer({ leadId, onClose }: { leadId: string | null; onClose
         <div className="flex-1 overflow-y-auto p-5">
           {tab === "detalhes" && lead && (
             <div className="space-y-4 text-sm">
-              <Field label="WhatsApp" value={lead.whatsapp} />
-              <Field label="Instagram" value={lead.instagram_id ?? "—"} />
-              <Field label="Tipo de negócio" value={lead.tipo_negocio} />
-              <Field label="Faturamento" value={lead.faturamento} />
+              <Field label="WhatsApp" value={lead.whatsapp ?? "—"} />
+              <Field label="Instagram" value={lead.instagram ?? lead.instagram_id ?? "—"} />
+              <Field label="Tipo de negócio" value={lead.tipo_negocio ?? "—"} />
+              <Field label="Faturamento" value={lead.faturamento ?? "—"} />
+
               <div>
                 <div className="text-[11px] uppercase tracking-widest text-gray-500">
                   Maior desafio
