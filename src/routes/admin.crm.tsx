@@ -51,7 +51,10 @@ function CRMPage() {
   }, []);
 
   const tipos = useMemo(
-    () => Array.from(new Set(leads.map((l) => l.tipo_negocio).filter(Boolean))),
+    () =>
+      Array.from(
+        new Set(leads.map((l) => l.tipo_negocio).filter((t): t is string => !!t)),
+      ),
     [leads],
   );
 
@@ -66,13 +69,15 @@ function CRMPage() {
       novo: [],
       qualificado: [],
       agendado: [],
-      reuniao: [],
-      cliente: [],
+      "reuniao-feita": [],
+      proposta: [],
+      ganho: [],
       perdido: [],
     };
     filtered.forEach((l) => g[l.status]?.push(l));
     return g;
   }, [filtered]);
+
 
   async function handleDragEnd(e: DragEndEvent) {
     const leadId = e.active.id as string;

@@ -77,7 +77,9 @@ export function LeadDrawer({ leadId, onClose }: { leadId: string | null; onClose
     if (!lead || !draft.trim() || !convId) return;
     const body = draft.trim();
     setDraft("");
-    const channel = lead.instagram_id && !lead.whatsapp ? "instagram" : "whatsapp";
+    const channel: "whatsapp" | "instagram" =
+      (lead.instagram ?? lead.instagram_id) && !lead.whatsapp ? "instagram" : "whatsapp";
+    const to = channel === "whatsapp" ? lead.whatsapp : (lead.instagram ?? lead.instagram_id);
     try {
       const { data: sess } = await supabase.auth.getSession();
       await fetch(SEND_MESSAGE_URL, {
@@ -88,9 +90,9 @@ export function LeadDrawer({ leadId, onClose }: { leadId: string | null; onClose
         },
         body: JSON.stringify({
           lead_id: lead.id,
-          to: channel === "whatsapp" ? lead.whatsapp : lead.instagram_id,
+          to,
           message: body,
-          channel,
+          canal: channel,
         }),
       });
     } catch {
@@ -98,11 +100,17 @@ export function LeadDrawer({ leadId, onClose }: { leadId: string | null; onClose
     }
     const { data: inserted } = await supabase
       .from("messages")
-      .insert({ conversation_id: convId, direction: "outbound", body, channel })
+      .insert({
+        conversation_id: convId,
+        direcao: "outbound",
+        conteudo: body,
+        metadata: { agent: "human" },
+      })
       .select()
       .single();
     if (inserted) setMessages((m) => [...m, inserted as Message]);
   }
+
 
   async function cancelSeq(id: string) {
     await supabase.from("sequences").update({ status: "cancelled" }).eq("id", id);
@@ -174,10 +182,11 @@ export function LeadDrawer({ leadId, onClose }: { leadId: string | null; onClose
         <div className="flex-1 overflow-y-auto p-5">
           {tab === "detalhes" && lead && (
             <div className="space-y-4 text-sm">
-              <Field label="WhatsApp" value={lead.whatsapp} />
-              <Field label="Instagram" value={lead.instagram_id ?? "—"} />
-              <Field label="Tipo de negócio" value={lead.tipo_negocio} />
-              <Field label="Faturamento" value={lead.faturamento} />
+              <Field label="WhatsApp" value={lead.whatsapp ?? "—"} />
+              <Field label="Instagram" value={lead.instagram ?? lead.instagram_id ?? "—"} />
+              <Field label="Tipo de negócio" value={lead.tipo_negocio ?? "—"} />
+              <Field label="Faturamento" value={lead.faturamento ?? "—"} />
+
               <div>
                 <div className="text-[11px] uppercase tracking-widest text-gray-500">
                   Maior desafio
@@ -301,7 +310,7 @@ function Field({ label, value }: { label: string; value: string }) {
 }
 
 function MessageBubble({ m }: { m: Message }) {
-  const isIn = m.direction === "inbound";
+  const isIn = m.direcao === "inbound";
   return (
     <div className={cn("flex", isIn ? "justify-start" : "justify-end")}>
       <div
@@ -312,9 +321,8 @@ function MessageBubble({ m }: { m: Message }) {
             : "border-emerald-500/30 bg-emerald-900/40 text-white",
         )}
       >
-        <div className="whitespace-pre-wrap break-words">{m.body}</div>
+        <div className="whitespace-pre-wrap break-words">{m.conteudo}</div>
         <div className="mt-1 flex items-center gap-1 text-[10px] text-gray-400">
-          <ChannelIcon channel={m.channel} size={10} />
           {new Date(m.created_at).toLocaleTimeString("pt-BR", {
             hour: "2-digit",
             minute: "2-digit",
@@ -324,5 +332,6 @@ function MessageBubble({ m }: { m: Message }) {
     </div>
   );
 }
+
 
 export { ChannelIcon, StatusBadge };

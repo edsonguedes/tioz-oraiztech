@@ -52,7 +52,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       const { count } = await supabase
         .from("messages")
         .select("*", { count: "exact", head: true })
-        .eq("direction", "inbound")
+        .eq("direcao", "inbound")
         .gte("created_at", since);
       setUnread(count ?? 0);
     };
