@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import InboxPage from "./admin.inbox";
+import { Route as InboxRoute } from "./admin.inbox";
 
 export const Route = createFileRoute("/admin/inbox/$leadId")({
-  component: InboxPage.options.component!,
+  component: InboxRoute.options.component!,
 });
