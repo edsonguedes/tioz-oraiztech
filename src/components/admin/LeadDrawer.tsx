@@ -310,7 +310,7 @@ function Field({ label, value }: { label: string; value: string }) {
 }
 
 function MessageBubble({ m }: { m: Message }) {
-  const isIn = m.direction === "inbound";
+  const isIn = m.direcao === "inbound";
   return (
     <div className={cn("flex", isIn ? "justify-start" : "justify-end")}>
       <div
@@ -321,9 +321,8 @@ function MessageBubble({ m }: { m: Message }) {
             : "border-emerald-500/30 bg-emerald-900/40 text-white",
         )}
       >
-        <div className="whitespace-pre-wrap break-words">{m.body}</div>
+        <div className="whitespace-pre-wrap break-words">{m.conteudo}</div>
         <div className="mt-1 flex items-center gap-1 text-[10px] text-gray-400">
-          <ChannelIcon channel={m.channel} size={10} />
           {new Date(m.created_at).toLocaleTimeString("pt-BR", {
             hour: "2-digit",
             minute: "2-digit",
@@ -333,5 +332,6 @@ function MessageBubble({ m }: { m: Message }) {
     </div>
   );
 }
+
 
 export { ChannelIcon, StatusBadge };
