@@ -17,6 +17,8 @@ export const Route = createFileRoute("/admin/inbox")({
   component: InboxPage,
 });
 
+export { InboxPage };
+
 type ConvWithLead = Conversation & { lead: Lead; last_message?: Message };
 
 function InboxPage() {
