@@ -40,11 +40,15 @@ function InboxPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // initial fetch + realtime
+  // initial fetch (once)
   useEffect(() => {
     fetchConvs();
+  }, []);
+
+  // realtime — re-subscribes when activeId changes so the closure sees the latest value
+  useEffect(() => {
     const ch = supabase
-      .channel("inbox-rt")
+      .channel(`inbox-rt-${activeId ?? "none"}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
@@ -109,8 +113,8 @@ function InboxPage() {
     return () => {
       supabase.removeChannel(ch);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeId]);
+
 
   // open from URL :leadId
   useEffect(() => {
@@ -198,6 +202,10 @@ function InboxPage() {
       canal === "whatsapp"
         ? active.lead.whatsapp
         : active.lead.instagram ?? active.lead.instagram_id;
+    if (!to) {
+      toast.error(`Lead sem ${canal} cadastrado.`);
+      return;
+    }
     const tempId = `temp-${Date.now()}`;
     const optimistic: Message = {
       id: tempId,

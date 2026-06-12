@@ -36,8 +36,8 @@ function Dashboard() {
         supabase
           .from("leads")
           .select("*", { count: "exact", head: true })
-          .in("status", ["agendado", "reuniao"]),
-        supabase.from("leads").select("*", { count: "exact", head: true }).eq("status", "cliente"),
+          .in("status", ["agendado", "reuniao-feita"]),
+        supabase.from("leads").select("*", { count: "exact", head: true }).eq("status", "ganho"),
       ]);
     setTotals({ total: total ?? 0, week: week ?? 0, sessions: sessions ?? 0, clients: clients ?? 0 });
 
