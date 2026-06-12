@@ -77,7 +77,9 @@ export function LeadDrawer({ leadId, onClose }: { leadId: string | null; onClose
     if (!lead || !draft.trim() || !convId) return;
     const body = draft.trim();
     setDraft("");
-    const channel = lead.instagram_id && !lead.whatsapp ? "instagram" : "whatsapp";
+    const channel: "whatsapp" | "instagram" =
+      (lead.instagram ?? lead.instagram_id) && !lead.whatsapp ? "instagram" : "whatsapp";
+    const to = channel === "whatsapp" ? lead.whatsapp : (lead.instagram ?? lead.instagram_id);
     try {
       const { data: sess } = await supabase.auth.getSession();
       await fetch(SEND_MESSAGE_URL, {
@@ -88,9 +90,9 @@ export function LeadDrawer({ leadId, onClose }: { leadId: string | null; onClose
         },
         body: JSON.stringify({
           lead_id: lead.id,
-          to: channel === "whatsapp" ? lead.whatsapp : lead.instagram_id,
+          to,
           message: body,
-          channel,
+          canal: channel,
         }),
       });
     } catch {
@@ -98,11 +100,17 @@ export function LeadDrawer({ leadId, onClose }: { leadId: string | null; onClose
     }
     const { data: inserted } = await supabase
       .from("messages")
-      .insert({ conversation_id: convId, direction: "outbound", body, channel })
+      .insert({
+        conversation_id: convId,
+        direcao: "outbound",
+        conteudo: body,
+        metadata: { agent: "human" },
+      })
       .select()
       .single();
     if (inserted) setMessages((m) => [...m, inserted as Message]);
   }
+
 
   async function cancelSeq(id: string) {
     await supabase.from("sequences").update({ status: "cancelled" }).eq("id", id);
