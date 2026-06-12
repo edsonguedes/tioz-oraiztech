@@ -13,21 +13,26 @@ export type LeadStatus =
   | "novo"
   | "qualificado"
   | "agendado"
-  | "reuniao"
-  | "cliente"
+  | "reuniao-feita"
+  | "proposta"
+  | "ganho"
   | "perdido";
+
 export type Channel = "whatsapp" | "instagram";
+export type AgentType = "sdr" | "atendimento" | "human";
+export type Direction = "inbound" | "outbound";
 
 export interface Lead {
   id: string;
   nome: string;
-  whatsapp: string;
-  tipo_negocio: string;
-  faturamento: string;
-  maior_dor: string;
+  whatsapp: string | null;
+  instagram: string | null;
+  instagram_id?: string | null;
+  tipo_negocio: string | null;
+  faturamento: string | null;
+  maior_dor: string | null;
   score: number;
   status: LeadStatus;
-  instagram_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -35,21 +40,23 @@ export interface Lead {
 export interface Conversation {
   id: string;
   lead_id: string;
-  channel: Channel;
+  canal: Channel;
   status: string;
+  agent_type: AgentType;
+  agent_state: Record<string, unknown> | null;
+  unread_count: number;
   created_at: string;
+  updated_at?: string;
   lead?: Lead;
-  messages?: Message[];
   last_message?: Message;
-  unread_count?: number;
 }
 
 export interface Message {
   id: string;
   conversation_id: string;
-  direction: "inbound" | "outbound";
-  body: string;
-  channel: Channel;
+  direcao: Direction;
+  conteudo: string;
+  metadata: Record<string, unknown> | null;
   created_at: string;
 }
 
@@ -75,7 +82,7 @@ export const STATUS_CONFIG: Record<
   LeadStatus,
   { label: string; color: string; border: string; bg: string }
 > = {
-  novo: { label: "Novos", color: "#9CA3AF", border: "border-t-gray-400", bg: "bg-gray-500/10" },
+  novo: { label: "Novos", color: "#94A3B8", border: "border-t-slate-400", bg: "bg-slate-500/10" },
   qualificado: {
     label: "Qualificados",
     color: "#3B82F6",
@@ -84,18 +91,24 @@ export const STATUS_CONFIG: Record<
   },
   agendado: {
     label: "Agendados",
-    color: "#F59E0B",
-    border: "border-t-amber-500",
-    bg: "bg-amber-500/10",
+    color: "#10B981",
+    border: "border-t-emerald-500",
+    bg: "bg-emerald-500/10",
   },
-  reuniao: {
-    label: "Em Reunião",
+  "reuniao-feita": {
+    label: "Reunião Feita",
     color: "#8B5CF6",
     border: "border-t-violet-500",
     bg: "bg-violet-500/10",
   },
-  cliente: {
-    label: "Clientes",
+  proposta: {
+    label: "Proposta",
+    color: "#EAB308",
+    border: "border-t-yellow-500",
+    bg: "bg-yellow-500/10",
+  },
+  ganho: {
+    label: "Ganhos",
     color: "#10B981",
     border: "border-t-emerald-500",
     bg: "bg-emerald-500/10",
@@ -112,7 +125,32 @@ export const STATUS_ORDER: LeadStatus[] = [
   "novo",
   "qualificado",
   "agendado",
-  "reuniao",
-  "cliente",
+  "reuniao-feita",
+  "proposta",
+  "ganho",
   "perdido",
 ];
+
+export const AGENT_CONFIG: Record<
+  AgentType,
+  { label: string; short: string; emoji: string; classes: string }
+> = {
+  sdr: {
+    label: "SDR Autônomo",
+    short: "SDR",
+    emoji: "🤖",
+    classes: "bg-blue-500/15 text-blue-300 border-blue-500/30",
+  },
+  atendimento: {
+    label: "Atendimento IA",
+    short: "Atend.",
+    emoji: "🤖",
+    classes: "bg-violet-500/15 text-violet-300 border-violet-500/30",
+  },
+  human: {
+    label: "Humano (você)",
+    short: "Humano",
+    emoji: "👤",
+    classes: "bg-gray-500/15 text-gray-300 border-gray-500/30",
+  },
+};
